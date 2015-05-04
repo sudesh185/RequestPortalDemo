@@ -1,0 +1,54 @@
+﻿<script type="text/javascript">
+    $(document).ready(function () {
+        $('#errorContainer').hide();
+        $('.form-group').on('keydown', '#Id', function (e) {
+            $('#errorContainer').hide();
+            var keyCode = e.keyCode || e.which;
+            if (keyCode == 9) {
+                e.preventDefault();
+                $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("GetRequestor", "Home")',
+                    dataType: 'json',
+                    data: { Id: $('#Id').val() },
+                    timeout: 60000,
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        $('#errorContainer').show();
+                        $('#errorContainer').text('There is some techincal issue please try again');
+                    },
+                    success: function (response) {
+                        if (response != null && response.status == true) {
+                            var requestor = response.requestor;
+                            if (requestor != null && requestor != typeof (undefined)) {
+                                $('#name').val(requestor.Name);
+                                $('#email').val(requestor.Email);
+                                $('#phone').val(requestor.Phone);
+                                $('#manager').val(requestor.Manager);
+                                $('#other').val(requestor.Other);
+                                //$('#contract-co').val(requestor.ContractC)
+                                
+                            }
+                            else {
+                                clearAll();
+                                $('#errorContainer').show();
+                                $('#errorContainer').text('Please provide a valid ID');
+                            }
+                        } else {
+                            clearAll();
+                            $('#errorContainer').show();
+                            $('#errorContainer').text('There is some techincal issue please try again');
+                        }
+                    }
+                });
+            }
+        });
+        function clearAll()
+        {
+            $('#name').val('');
+            $('#email').val('');
+            $('#phone').val('');
+            $('#manager').val('');
+            $('#other').val('');
+        }
+    })
+</script>
